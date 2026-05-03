@@ -1,0 +1,43 @@
+{
+  "name": "miqaat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Miqāt — a serene, local-first desktop app for prayer times, Qibla, Hijri calendar, and Athan playback.",
+  "workspaces": [
+    "server",
+    "client",
+    "electron"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n server,client,electron -c blue,green,magenta \"npm:dev:server\" \"npm:dev:client\" \"npm:dev:electron\"",
+    "dev:server": "npm --workspace server run dev",
+    "dev:client": "npm --workspace client run dev",
+    "dev:electron": "wait-on http://localhost:5173 http-get://127.0.0.1:3001/api/health && npm --workspace electron run dev",
+    "build": "npm run build:server && npm run build:client && npm run build:electron",
+    "build:server": "npm --workspace server run build",
+    "build:client": "npm --workspace client run build",
+    "build:electron": "npm --workspace electron run build",
+    "package": "npm run build && npm --workspace electron run install:prod-deps && npm --workspace electron run package",
+    "release": "npm run build && npm --workspace electron run install:prod-deps && npm --workspace electron run release",
+    "release:draft": "npm run build && npm --workspace electron run install:prod-deps && npm --workspace electron run release:draft",
+    "start": "npm --workspace electron run start",
+    "lint": "npm --workspace server run lint && npm --workspace client run lint",
+    "test": "npm --workspace server run test -- --testPathIgnorePatterns=prayer-parity",
+    "test:online": "cross-env ONLINE=1 npm --workspace server run test",
+    "test:e2e": "playwright test",
+    "test:e2e:setup": "npm run build && npm --workspace electron run install:prod-deps && npm --workspace electron run package -- --dir",
+    "fetch:audio": "node scripts/fetch-athans.mjs",
+    "generate:icons": "node scripts/generate-icons.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "png-to-ico": "^2.1.8",
+    "sharp": "^0.33.5",
+    "wait-on": "^8.0.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

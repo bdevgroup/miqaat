@@ -1,0 +1,78 @@
+name: 🐛 Bug report
+description: Something's broken in the desktop app
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. To help us reproduce, please include the **diagnostic snapshot** from the app (Settings → Diagnostics → "Copy diagnostic snapshot") and paste it below — it captures your settings, location, prayer-time cache state, and version info, all without any personal data leaving your machine until you paste it.
+
+  - type: input
+    id: version
+    attributes:
+      label: Miqāt version
+      description: Find it in Help dialog or About menu.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system + version
+      placeholder: "Windows 11 23H2"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear, short description of the bug.
+      placeholder: "The Athan didn't fire at Maghrib on 2026-04-29."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Set location to ...
+        2. Open the calendar dialog
+        3. Notice that ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      placeholder: "The Athan should have played at the displayed Maghrib time."
+    validations:
+      required: true
+
+  - type: textarea
+    id: snapshot
+    attributes:
+      label: Diagnostic snapshot
+      description: Settings → Diagnostics → "Copy diagnostic snapshot", then paste here.
+      render: json
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log lines
+      description: From `%APPDATA%/Miqāt/logs/main.log` (Windows). The last 50 lines around the issue are usually enough.
+      render: text
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmations
+      options:
+        - label: I searched [existing issues](https://github.com/bdevgroup/miqaat/issues) for this bug.
+          required: true
+        - label: I'm running the latest version (or the bug is reproducible on the latest).
+          required: false

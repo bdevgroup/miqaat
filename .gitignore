@@ -1,0 +1,46 @@
+node_modules/
+dist/
+build/
+out/
+.vite/
+*.log
+*.tsbuildinfo
+.DS_Store
+Thumbs.db
+.env
+.env.local
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+electron/dist/
+electron/dist-build/
+client/dist/
+server/dist/
+coverage/
+.cache/
+test-results/
+playwright-report/
+
+# Downloaded audio assets — fetched via `npm run fetch:audio`.
+# Licenses live in client/public/audio/LICENSES.md (tracked).
+client/public/audio/*.mp3
+
+# Server dev artifacts — uploaded custom-reciter MP3s land here when
+# running the server outside Electron (the app uses %APPDATA%/Miqāt/
+# in production). Always per-user, never tracked.
+server/custom-athans/
+
+# Pre-rebrand SQLite leftovers (mothern-athan.*). The active DB is
+# miqaat.db, which is also covered by the global *.db rule. Both
+# stay local-only.
+server/mothern-athan.*
+
+# Private working folder — design exploration HTMLs, raw concept notes,
+# original spec markdowns, sample audio fixtures, etc. Anything that
+# helps me work locally but doesn't belong in the public repo.
+_private/
+
+# Local-only orphan from the landing-site separation. The site lives
+# in its own repo now; if a stray landing/ shows up locally, ignore it.
+landing/

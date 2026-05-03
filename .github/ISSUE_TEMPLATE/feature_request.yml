@@ -1,0 +1,37 @@
+name: 💡 Feature request
+description: Suggest something Miqāt should do
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion. The clearest feature requests describe the **user problem** first — once that's understood, the right solution often differs from what was originally proposed.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      placeholder: "I keep missing Fajr because the alarm sound is too soft."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution (optional)
+      description: How you'd imagine the fix. Skip if you're unsure — that's fine.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Anything else relevant — your environment, related features, links to similar implementations elsewhere.
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmations
+      options:
+        - label: I searched [existing issues](https://github.com/bdevgroup/miqaat/issues?q=is%3Aissue+label%3Aenhancement) and the [roadmap](https://github.com/bdevgroup/miqaat/blob/main/ROADMAP.md).
+          required: true

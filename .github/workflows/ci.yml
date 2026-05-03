@@ -1,0 +1,56 @@
+# CI for Miqāt — runs on every PR + every push to main.
+# Verifies: install, lint, offline tests, full TS build of all 3
+# workspaces (server, client, electron). Does NOT run electron-builder
+# (no packaging in CI yet — would need code-signing infrastructure).
+#
+# Online tests (the 250-case Aladhan parity sweep) are skipped here
+# to keep CI deterministic + fast. Run them locally before a release
+# with `npm run test:online`.
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Cancel older runs on the same ref when a new one fires — saves GA minutes.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Lint · Test · Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        # `--no-audit --no-fund` keeps logs short; `npm ci` is reproducible
+        # and respects the committed package-lock.json.
+        run: npm ci --no-audit --no-fund
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test (offline)
+        # `npm test` already excludes the online prayer-parity suite via
+        # --testPathIgnorePatterns. Aladhan isn't reachable from CI without
+        # network egress allowlisting we don't want to manage.
+        run: npm test
+
+      - name: Build all workspaces
+        # Server (nest build) → client (vite build) → electron (tsc).
+        # Electron-builder packaging happens at release time, not here.
+        run: npm run build

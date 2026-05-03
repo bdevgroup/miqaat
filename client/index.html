@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0e0d0b" />
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval';
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: blob: https:;
+      font-src 'self' data:;
+      connect-src 'self' http://127.0.0.1:* http://localhost:*
+        https://api.aladhan.com https://nominatim.openstreetmap.org
+        https://tile.openstreetmap.org https://*.tile.openstreetmap.org
+        https://Qurango.net https://*.qurango.net;
+      worker-src 'self' blob:;
+      media-src 'self' blob: http://127.0.0.1:* http://localhost:*
+        https://Qurango.net https://*.qurango.net;
+    ">
+    <title>Miqāt</title>
+    <style>
+      html, body, #root { height: 100%; margin: 0; background: #0e0d0b; }
+      #splash {
+        position: fixed; inset: 0; display: flex; align-items: center;
+        justify-content: center; flex-direction: column; gap: 28px;
+        background: #0e0d0b; color: #f5f0e6; z-index: 9999;
+        transition: opacity 400ms ease-out;
+        font-family: 'Instrument Serif', 'Georgia', serif;
+      }
+      #splash.fade-out { opacity: 0; }
+      .splash-mark {
+        font-size: 84px; line-height: 1; letter-spacing: -2px;
+        font-style: italic; font-weight: 400; color: #f5f0e6;
+        position: relative;
+      }
+      /* Bar geometry — `bar-i` sits BELOW the letter (matches HorizonAlif's
+         iBarPosition='bottom' default); `bar-a` is the brand horizon line
+         on the ā, kept above. Update both surfaces in lockstep. */
+      .splash-mark .bar-i,
+      .splash-mark .bar-a {
+        position: absolute; height: 3px;
+      }
+      .splash-mark .bar-i { top: calc(100% + 4px); left: 14%; right: 14%; background: #f5f0e6; }
+      .splash-mark .bar-a { top: -6px; left: 0; right: 0; background: #d4a86a; }
+      .splash-mark .i-wrap,
+      .splash-mark .a-wrap {
+        position: relative; display: inline-block;
+      }
+      .splash-sub {
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 10px; letter-spacing: 4px; color: #a8a296;
+        text-transform: uppercase;
+      }
+      .splash-loader {
+        width: 140px; height: 1.5px; background: rgba(245,240,230,0.1);
+        overflow: hidden; position: relative;
+      }
+      .splash-bar {
+        position: absolute; inset: 0; width: 40%;
+        background: #d4a86a;
+        animation: splash 1.4s ease-in-out infinite;
+      }
+      @keyframes splash {
+        0%   { left: -40%; }
+        100% { left: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="splash">
+      <div class="splash-mark" dir="ltr" aria-label="miqāt">m<span class="i-wrap">i<span class="bar-i"></span></span>q<span class="a-wrap"><span class="bar-a"></span>a</span>t</div>
+      <div class="splash-sub">an appointed time</div>
+      <div class="splash-loader"><div class="splash-bar"></div></div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
