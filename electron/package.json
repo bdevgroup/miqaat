@@ -67,25 +67,23 @@
       "node_modules/better-sqlite3/**/*"
     ],
     "win": {
-      "target": [
-        "zip",
-        "dir"
-      ],
+      "target": ["zip"],
       "icon": "resources/icon.ico"
     },
     "mac": {
-      "target": [
-        "zip",
-        "dir"
-      ],
-      "icon": "resources/icon.png"
+      "target": ["dmg", "zip"],
+      "icon": "resources/icon.png",
+      "identity": null,
+      "category": "public.app-category.lifestyle"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "resources/icon.png",
+      "category": "Utility",
+      "synopsis": "Local-first Athan & prayer-time app",
+      "description": "Worldwide prayer times, Athan player, Qibla direction, and Hijri calendar. No tracking, no account, no ads."
     },
     "publish": [
-      {
-        "provider": "generic",
-        "url": "https://updates.miqaaat.com/",
-        "channel": "latest"
-      },
       {
         "provider": "github",
         "owner": "bdevgroup",

@@ -44,6 +44,16 @@ See [docs/brand.md](docs/brand.md) for the full system, palette, and typography.
 
 See [docs/architecture.md](docs/architecture.md) for the data flow, in-process NestJS rationale, and theme system.
 
+## Install
+
+Grab the latest from [Releases](https://github.com/bdevgroup/miqaat/releases/latest):
+
+| Platform | Asset | Notes |
+| --- | --- | --- |
+| Windows 10/11 | `Miqaat-X.Y.Z-win.zip` | Extract anywhere, run `Miqaat.exe`. SmartScreen may warn on first launch — click "More info" → "Run anyway". |
+| macOS 12+ | `Miqaat-X.Y.Z.dmg` | **Unsigned for now.** First launch shows *"cannot be opened because the developer cannot be verified"* — close the dialog, right-click the app in Finder → **Open** → **Open** in the second dialog. After that it launches normally. We'll switch to a signed + notarized build once we have an Apple Developer account. |
+| Linux | `Miqaat-X.Y.Z.AppImage` or `.deb` | AppImage: `chmod +x` then double-click. `.deb`: `sudo apt install ./Miqaat-*.deb`. |
+
 ## Getting started
 
 ```bash

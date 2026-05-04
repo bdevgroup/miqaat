@@ -1,12 +1,19 @@
-# Release workflow for Miqāt — builds the Windows ZIP and publishes
-# it to GitHub Releases. Triggered by pushing a `v*.*.*` tag, or by
-# clicking "Run workflow" in the Actions UI.
+# Release workflow for Miqāt — builds Windows + macOS + Linux in
+# parallel and publishes all artifacts to a single GitHub Release.
+# Triggered by pushing a `v*.*.*` tag, or via "Run workflow" in the
+# Actions UI.
 #
-# Version source of truth is `electron/package.json`. Bump it, commit,
-# tag with the matching `vX.Y.Z`, push the tag — the workflow takes
-# over from there. electron-builder uses the tag's `GH_TOKEN` to create
-# the release and upload assets + the `latest.yml` file electron-updater
-# needs for in-app auto-updates.
+# Version source of truth is `electron/package.json`. Bump it (use
+# `npm run release:bump`), tag the matching vX.Y.Z, push the tag —
+# the workflow handles the rest. electron-builder's GitHub provider
+# creates the release on the first job to finish and the others
+# append their artifacts to the same release.
+#
+# macOS builds are unsigned for now (no Apple Developer account).
+# Users see a Gatekeeper warning on first launch — workaround
+# documented in the README. Once we have a Developer ID we'll add
+# `CSC_LINK` + `CSC_KEY_PASSWORD` secrets and the build will sign
+# + notarize automatically.
 
 name: Release
 
@@ -16,32 +23,37 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to build (e.g. v1.0.1) — must already exist'
+        description: 'Tag to build (e.g. v1.0.2) — must already exist'
         required: true
         type: string
 
-# Releases are sequential — never run two at once on the same tag.
+# One release at a time per ref. Don't cancel in-progress; let it
+# finish so partial artifacts don't end up half-uploaded.
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
-  # electron-builder needs to create the GitHub Release and upload
-  # assets. The default GITHUB_TOKEN with `contents: write` is enough.
   contents: write
 
 jobs:
-  windows:
-    name: Build · Sign · Publish (Windows)
-    runs-on: windows-latest
-    timeout-minutes: 30
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+
+    strategy:
+      # Don't kill the other platforms if one fails — better to ship
+      # the two that work and fix the third than to ship nothing.
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # If triggered manually with a tag input, check that ref out;
-          # otherwise the tag push already provides the right ref.
+          # workflow_dispatch passes a tag; tag-push provides the ref directly.
           ref: ${{ inputs.tag || github.ref }}
 
       - name: Setup Node 22
@@ -54,34 +66,28 @@ jobs:
         run: npm ci --no-audit --no-fund
 
       - name: Build all workspaces
-        # server (nest) → client (vite) → electron (tsc). The release
-        # script re-runs `npm run build` itself, but doing it here makes
-        # the failure mode clearer if a workspace breaks.
         run: npm run build
 
       - name: Package + publish
-        # `npm run release` does:
-        #   1. npm run build (no-op, already ran)
-        #   2. electron install:prod-deps (production-only deps in electron/)
-        #   3. electron-builder install-app-deps (rebuilds better-sqlite3
-        #      against Electron's Node ABI)
-        #   4. electron-builder --publish=always (uploads to GH Releases
-        #      via the `github` provider in electron/package.json)
+        # electron-builder picks the right target from build.{win,mac,linux}
+        # automatically based on the host OS. Each runner produces its own
+        # platform's artifacts and uploads them to the GitHub Release.
         env:
           # electron-builder reads GH_TOKEN, not GITHUB_TOKEN.
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run release
 
       - name: Upload build artifact (debugging)
-        # Keeps the unpacked dist around for 7 days in case a release
-        # asset is malformed and we need to inspect it without rerunning.
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: miqaat-windows-${{ github.ref_name }}
+          name: miqaat-${{ matrix.os }}-${{ github.ref_name }}
           path: |
             electron/dist-build/*.zip
-            electron/dist-build/latest.yml
+            electron/dist-build/*.dmg
+            electron/dist-build/*.AppImage
+            electron/dist-build/*.deb
+            electron/dist-build/latest*.yml
             electron/dist-build/*.blockmap
           retention-days: 7
           if-no-files-found: warn
