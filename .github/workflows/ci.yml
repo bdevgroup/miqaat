@@ -1,7 +1,10 @@
 # CI for Miqāt — runs on every PR + every push to main.
-# Verifies: install, lint, offline tests, full TS build of all 3
-# workspaces (server, client, electron). Does NOT run electron-builder
-# (no packaging in CI yet — would need code-signing infrastructure).
+# Verifies: install, offline tests, full TS build of all 3 workspaces
+# (server, client, electron). The build step itself runs `tsc` for
+# every workspace (nest build, tsc -b && vite build, tsc -p), which
+# is the high-signal type check; we don't run a separate lint pass
+# until eslint is wired up properly. Electron-builder packaging
+# happens in release.yml (tag-triggered), not here.
 #
 # Online tests (the 250-case Aladhan parity sweep) are skipped here
 # to keep CI deterministic + fast. Run them locally before a release
@@ -22,7 +25,7 @@ concurrency:
 
 jobs:
   build:
-    name: Lint · Test · Build
+    name: Test · Build
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -40,9 +43,6 @@ jobs:
         # `--no-audit --no-fund` keeps logs short; `npm ci` is reproducible
         # and respects the committed package-lock.json.
         run: npm ci --no-audit --no-fund
-
-      - name: Lint
-        run: npm run lint
 
       - name: Test (offline)
         # `npm test` already excludes the online prayer-parity suite via

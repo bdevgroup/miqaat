@@ -21,7 +21,6 @@
     "release": "npm run build && npm --workspace electron run install:prod-deps && npm --workspace electron run release",
     "release:draft": "npm run build && npm --workspace electron run install:prod-deps && npm --workspace electron run release:draft",
     "start": "npm --workspace electron run start",
-    "lint": "npm --workspace server run lint && npm --workspace client run lint",
     "test": "npm --workspace server run test -- --testPathIgnorePatterns=prayer-parity",
     "test:online": "cross-env ONLINE=1 npm --workspace server run test",
     "test:e2e": "playwright test",

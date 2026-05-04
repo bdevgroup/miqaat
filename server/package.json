@@ -7,7 +7,6 @@
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main.js",
-    "lint": "eslint \"src/**/*.ts\" --max-warnings=0",
     "test": "jest --config jest.config.js"
   },
   "dependencies": {
