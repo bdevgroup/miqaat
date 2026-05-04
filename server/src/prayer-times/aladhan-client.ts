@@ -49,7 +49,12 @@ export async function fetchAladhanTimings(opts: {
         method: opts.method,
         school: opts.school,
       },
-      timeout: 3000,
+      // 3 s was tight for first-launch on residential connections (cold
+      // DNS + TLS handshake to api.aladhan.com routinely takes 1.5–2 s
+      // and any backpressure pushes past 3 s). 10 s gives the verify
+      // step room to succeed; the user already has locally-computed
+      // times rendered, so the wait is invisible.
+      timeout: 10000,
     });
     const timings = res.data?.data?.timings;
     const timezone = res.data?.data?.meta?.timezone;
@@ -65,7 +70,7 @@ export async function fetchAladhanHijri(gregorianDate: string): Promise<AladhanH
   // Format YYYY-MM-DD → DD-MM-YYYY
   const [y, m, d] = gregorianDate.split('-');
   try {
-    const res = await axios.get(`${BASE}/gToH/${d}-${m}-${y}`, { timeout: 3000 });
+    const res = await axios.get(`${BASE}/gToH/${d}-${m}-${y}`, { timeout: 10000 });
     return res.data?.data?.hijri ?? null;
   } catch (err) {
     logger.warn(`Aladhan Hijri failed: ${(err as Error).message}`);

@@ -80,6 +80,17 @@ export function usePrayerTimes(opts: CommonPrayerOpts & {
     },
     enabled: opts.lat != null && opts.lng != null,
     staleTime: 60 * 60_000,
+    // While the response is still locally-computed, the server is
+    // fetching the verified copy from Aladhan in the background. Poll
+    // every 15 s so the "Local" badge flips to "Verified" as soon as
+    // the cache row is upgraded — without this, the user could sit on
+    // the local view for up to an hour (the staleTime). Once source
+    // becomes 'aladhan' the polling stops automatically.
+    refetchInterval: (query) => {
+      const data = query.state.data as PrayerTimesResponse | undefined;
+      return data?.source === 'aladhan' ? false : 15_000;
+    },
+    refetchIntervalInBackground: false,
   });
 }
 

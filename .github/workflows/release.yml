@@ -72,6 +72,13 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends fakeroot dpkg
 
+      - name: Fetch Athan audio
+        # MP3s are gitignored (third-party-licensed, fetched on demand).
+        # Without this step the packaged app ships with an empty audio
+        # folder and every reciter fails with "no supported source was
+        # found" the first time a prayer fires.
+        run: npm run fetch:audio
+
       - name: Build all workspaces
         run: npm run build
 
