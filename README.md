@@ -46,13 +46,39 @@ See [docs/architecture.md](docs/architecture.md) for the data flow, in-process N
 
 ## Install
 
-Grab the latest from [Releases](https://github.com/bdevgroup/miqaat/releases/latest):
+Grab the latest from [Releases](https://github.com/bdevgroup/miqaat/releases/latest).
 
-| Platform | Asset | Notes |
-| --- | --- | --- |
-| Windows 10/11 | `Miqaat-X.Y.Z-win.zip` | Extract anywhere, run `Miqaat.exe`. SmartScreen may warn on first launch — click "More info" → "Run anyway". |
-| macOS 12+ | `Miqaat-X.Y.Z.dmg` | **Unsigned for now.** First launch shows *"cannot be opened because the developer cannot be verified"* — close the dialog, right-click the app in Finder → **Open** → **Open** in the second dialog. After that it launches normally. We'll switch to a signed + notarized build once we have an Apple Developer account. |
-| Linux | `Miqaat-X.Y.Z.AppImage` or `.deb` | AppImage: `chmod +x` then double-click. `.deb`: `sudo apt install ./Miqaat-*.deb`. |
+| Platform | Asset |
+| --- | --- |
+| Windows 10/11 | `Miqaat-X.Y.Z-win.zip` |
+| macOS 12+ Apple Silicon (M1/M2/M3/M4) | `Miqaat-X.Y.Z-arm64.dmg` |
+| macOS 12+ Intel | `Miqaat-X.Y.Z-x64.dmg` |
+| Linux | `Miqaat-X.Y.Z-x64.AppImage` or `Miqaat-X.Y.Z-x64.deb` |
+
+### macOS — first-launch workaround
+
+The macOS builds are unsigned (no Apple Developer account yet). On first launch you'll see one of these — they're all the same Gatekeeper warning:
+
+- *"Miqaat is damaged and can't be opened"*
+- *"Miqaat cannot be opened because Apple cannot check it for malicious software"*
+- *"...may harm your Mac"*
+
+Bypass with one Terminal command. Open **Terminal.app** (⌘+Space → "Terminal") and paste:
+
+```bash
+xattr -cr /Applications/Miqaat.app
+```
+
+That clears the `com.apple.quarantine` attribute Gatekeeper uses to flag downloaded apps. After this, double-clicking launches normally — and you only need to run it once per install. When Miqāt earns its Apple Developer cert, this step goes away.
+
+### Windows — first-launch workaround
+
+SmartScreen may show *"Windows protected your PC"* on first launch (same root cause: unsigned binary). Click **More info** → **Run anyway**.
+
+### Linux
+
+- AppImage: `chmod +x Miqaat-*.AppImage` then double-click.
+- `.deb`: `sudo apt install ./Miqaat-*.deb`.
 
 ## Getting started
 
