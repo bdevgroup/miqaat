@@ -1,6 +1,6 @@
 {
   "name": "@miqaat/electron",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "description": "Miqāt desktop shell",
   "main": "dist/main.js",
@@ -67,17 +67,25 @@
       "node_modules/better-sqlite3/**/*"
     ],
     "win": {
-      "target": ["zip"],
+      "target": [
+        "zip"
+      ],
       "icon": "resources/icon.ico"
     },
     "mac": {
-      "target": ["dmg", "zip"],
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "icon": "resources/icon.png",
       "identity": null,
       "category": "public.app-category.lifestyle"
     },
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": [
+        "AppImage",
+        "deb"
+      ],
       "icon": "resources/icon.png",
       "category": "Utility",
       "synopsis": "Local-first Athan & prayer-time app",
