@@ -40,25 +40,9 @@ See [docs/brand.md](docs/brand.md) for the full system, palette, and typography.
 
 ## Architecture
 
-```
-┌────────────── Electron (main.ts) ──────────────┐
-│  port-scan · DB path · resolve-shim · tray     │
-│  auto-updater · IPC · widget window            │
-│            │                                   │
-│            ▼   in-process require()            │
-│       ┌───────────────┐                        │
-│       │   NestJS       │  HTTP :3001           │
-│       │   SQLite (WAL) │  CORS locked          │
-│       └───────────────┘                        │
-│            │                                   │
-│            ▼  window.__API_URL__               │
-│       ┌───────────────────────────────┐        │
-│       │ React 18 + Vite + shadcn/ui    │        │
-│       │ TanStack Query · TickContext   │        │
-│       │ Miqāt theme + Instrument Serif │        │
-│       └───────────────────────────────┘        │
-└────────────────────────────────────────────────┘
-```
+![Miqāt desktop architecture — Electron main + in-process NestJS + React renderer](docs/img/architecture.webp)
+
+See [docs/architecture.md](docs/architecture.md) for the data flow, in-process NestJS rationale, and theme system.
 
 ## Getting started
 

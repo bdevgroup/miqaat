@@ -2,19 +2,11 @@
 
 ## Three processes, one app
 
-```
-Electron main (Node)  ──── in-process ────▶  NestJS server
-                                             │
-                                             ▼
-                                          SQLite (WAL)
-          │
-          │ loadURL('http://localhost:5173') in dev
-          │ loadFile('client/index.html') in prod
-          ▼
-     Renderer (Chromium)
-     ├── window.__API_URL__  ← injected by main
-     └── React app (TanStack Query → axios → NestJS)
-```
+![Miqāt desktop architecture — Electron main + in-process NestJS + React renderer](img/architecture.webp)
+
+Electron's main process owns the lifecycle (port scanning, DB path, the `Module._resolveFilename` shim, tray, auto-updater, IPC, widget window). It `require()`s NestJS in-process, which binds to `127.0.0.1:3001` with CORS locked and talks to a WAL-mode SQLite via `better-sqlite3`. The renderer (React 18 + Vite, shadcn/ui, TanStack Query, the `TickContext` 1 Hz broadcaster, Miqāt theme on Instrument Serif) reaches the API through a `window.__API_URL__` value injected by main after `did-finish-load`.
+
+In dev, main `loadURL('http://localhost:5173')`. In prod, it `loadFile('client/index.html')` from `extraResources`.
 
 ## Why in-process NestJS?
 Spawning a Node child process inside a packaged Electron app fails with `ENOENT` because `process.execPath` is the Electron binary, not Node. Electron's main process is a Node environment — we just `require('server/main.js')` and call `bootstrap(port)`.
