@@ -82,7 +82,10 @@ execSync('npm install --package-lock-only --no-audit --no-fund', {
 const filesToStage = [...PKGS, 'package-lock.json'].join(' ');
 execSync(`git add ${filesToStage}`, { cwd: ROOT, stdio: 'inherit' });
 execSync(`git commit -m "chore: release v${next}"`, { cwd: ROOT, stdio: 'inherit' });
-execSync(`git tag v${next}`, { cwd: ROOT, stdio: 'inherit' });
+// Annotated tag (not lightweight) — required so `git push --follow-tags`
+// actually transmits it. We learned this the hard way when v1.0.3
+// landed locally but never reached origin.
+execSync(`git tag -a v${next} -m "v${next}"`, { cwd: ROOT, stdio: 'inherit' });
 
 console.log(`\nTagged v${next}.`);
 
