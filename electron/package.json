@@ -3,6 +3,12 @@
   "version": "1.0.4",
   "private": true,
   "description": "Miqāt desktop shell",
+  "homepage": "https://miqaaat.com",
+  "author": {
+    "name": "Develop Better Solutions",
+    "email": "contact@miqaaat.com",
+    "url": "https://develop-better-solutions.com"
+  },
   "main": "dist/main.js",
   "scripts": {
     "dev": "tsc -p tsconfig.json && cross-env NODE_ENV=development electron .",
@@ -88,14 +94,13 @@
       "category": "public.app-category.lifestyle"
     },
     "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ],
+      "target": ["AppImage", "deb"],
       "icon": "resources/icon.png",
       "category": "Utility",
       "synopsis": "Local-first Athan & prayer-time app",
-      "description": "Worldwide prayer times, Athan player, Qibla direction, and Hijri calendar. No tracking, no account, no ads."
+      "description": "Worldwide prayer times, Athan player, Qibla direction, and Hijri calendar. No tracking, no account, no ads.",
+      "maintainer": "Develop Better Solutions <contact@miqaaat.com>",
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
     },
     "publish": [
       {
