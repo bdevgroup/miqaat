@@ -65,7 +65,7 @@ npm run test:online   # adds 250-case Aladhan parity sweep
 npm run package       # ZIP build via electron-builder
 ```
 
-See [docs/getting-started.md](docs/getting-started.md) for setup, [docs/desktop-builds.md](docs/desktop-builds.md) for packaging, [docs/auto-updater.md](docs/auto-updater.md) for release workflow.
+See [docs/getting-started.md](docs/getting-started.md) for setup, [docs/desktop-builds.md](docs/desktop-builds.md) for packaging, [docs/releasing.md](docs/releasing.md) for the release flow (one-shot bump → tag → matrix build → landing refresh), and [docs/auto-updater.md](docs/auto-updater.md) for in-app update behaviour.
 
 ## Stack
 

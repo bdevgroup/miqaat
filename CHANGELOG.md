@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file. Format foll
 ## [Unreleased]
 
 ### Added
+- **Universal macOS build.** Mac target now produces a single `arch: universal` DMG that runs on both Apple Silicon (M-series) and Intel Macs. ~2× file size, ~5 min slower CI, but no more "M1-only" footgun for ~30% of Mac users still on Intel.
+
+### Fixed
+- **Linux `.deb` now ships.** v1.0.3's matrix only produced an `AppImage` because the Ubuntu runner didn't have `fakeroot` installed and electron-builder silently no-ops on missing deps. Workflow now `apt-get install`s `fakeroot` + `dpkg` before building. Debian/Ubuntu/Mint users will get a one-click installer next release.
+- **Annotated tags pushed reliably.** `npm run release:bump` was creating lightweight tags, which `git push --follow-tags` ignores. Switched to `git tag -a -m`. (Lost ~30 minutes of "why isn't the workflow firing?" on v1.0.3.)
+
+### CI / Infra
+- **On-demand landing revalidation.** New `revalidate-landing` job at the end of the release matrix POSTs to the landing site's `/api/revalidate` endpoint, dropping its ISR cache so visitors see the new download URLs immediately instead of waiting up to 10 minutes. Skips gracefully if the `LANDING_REVALIDATE_URL` / `LANDING_REVALIDATE_SECRET` repo secrets aren't set, so forks don't fail this step.
+
+## [1.0.3] — 2026-05-04
+
+### Added
+- **Multi-platform release matrix.** GitHub Actions release workflow now builds Windows + macOS + Linux in parallel on `windows-latest`, `macos-latest`, `ubuntu-latest`. All three publish artifacts to the same GitHub Release.
+- **macOS support (unsigned).** First public macOS build — DMG + zip. Currently Apple Silicon only and unsigned (Gatekeeper warning on first launch; right-click → Open workaround documented in README). Universal binary + Apple Developer signing both deferred.
+- **Linux AppImage.** Universal Linux artifact, no install required (`chmod +x` then double-click).
+- **Per-platform download CTAs on the landing.** [components/download.tsx](../miqaat-landing/components/download.tsx) shows three buttons (Windows / macOS / Linux), each fed by [lib/latest-release.ts](../miqaat-landing/lib/latest-release.ts)'s GitHub Releases API call with 10-minute ISR. Buttons fall back to the releases page if a platform's asset is missing for the current tag.
+
+### Changed
+- **`mac.identity: null`** in `electron/package.json` to explicitly skip code-signing on macOS until we have a Developer ID cert.
+- **`win.target`** simplified from `["zip", "dir"]` to `["zip"]` — `dir` was just an unpacked debug output, never useful in a release.
+
+## [1.0.2] — 2026-05-04
+
+### Added
+- **First production GitHub Release.** Tag-triggered Actions workflow ([.github/workflows/release.yml](.github/workflows/release.yml)) builds the Windows ZIP and uploads it via electron-builder's GitHub publish provider.
+- **`npm run release:bump`** — one-shot monorepo version bumper ([scripts/bump-version.mjs](scripts/bump-version.mjs)). Bumps all four `package.json` files, refreshes the lockfile, commits, tags. With `-- --push`, also pushes the tag to fire the release workflow.
+- Per-platform install table in the [README](README.md) covering Windows, macOS, Linux with platform-specific install notes (SmartScreen, Gatekeeper, AppImage chmod).
+- Excalidraw architecture diagram in [docs/img/architecture.webp](docs/img/architecture.webp), referenced from README + [docs/architecture.md](docs/architecture.md), replacing the prior ASCII box drawing.
+
+### Changed
+- **Publish providers cut to GitHub-only.** Removed the `generic` publisher pointing at `updates.miqaaat.com` — the URL had no upload endpoint, was warning-noisy on every release, and we don't need a second copy of artifacts. Auto-updater clients can be repointed when a real update server lands.
+- **Landing version label is now dynamic.** [components/download.tsx](../miqaat-landing/components/download.tsx) reads from the GitHub Releases API at request time (server-side ISR, 10 min revalidate) instead of a hardcoded constant. New releases appear on the site without a code change or redeploy.
+
+### Removed
+- **Broken `lint` scripts.** Server + client called `eslint` but neither workspace had it as a devDependency; CI was failing with `eslint: not found`. Build's `tsc` already typechecks all three workspaces, which is the high-signal check. Proper eslint setup can come back later as its own change.
+- `Co-Authored-By: Claude` trailers from commit history (rewritten via `git filter-branch`). Disclosure stays in the README acknowledgments where it belongs — keeping the GitHub Contributors panel meaningful.
+
+## [Older — pre-1.0.0 development log]
+
+The entries below were written during development before the first public release; they're effectively part of 1.0.0's scope but kept verbatim for the historical record.
+
+### Added
 - **Arabic (RTL) localization pass — full Arabic surface (2026-04-26).** Closed every i18n gap surfaced in the AR review:
   - **`<HorizonMiqaat />` Arabic wordmark** — renders ميقات in Amiri (classical-serif) with the same horizon-bar-over-the-alif concept as the Latin macron-over-`ā`. `<LogoMark />` picks Latin or Arabic based on `useI18n().lang`. Latin wordmark gained a hard `dir="ltr"` lock so it can never reverse when the page goes RTL. Splash gets the same lock (always Latin since lang isn't loaded yet).
   - **Reciter + RadioStation Arabic names.** Both data shapes now carry optional `nameAr`/`whoAr` fields; new `pickName()` / `pickStationName()` helpers in `client/src/lib/localizedName.ts` resolve based on locale. Used by AthanPlayer, RadioPlayer, SettingsDialog, NowPlayingBanner. Examples: "Makkah · Al-Haram / Sheikh ʿAli Mulla" → "مكة · الحرم / الشيخ علي ملا".

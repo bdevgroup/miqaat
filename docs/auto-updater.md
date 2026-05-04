@@ -14,15 +14,10 @@ Checks re-run every hour while the app is open. Errors are logged to `electron-l
 
 ## Configure the publish endpoint
 
-[electron/package.json](../electron/package.json) lists **two** providers in `build.publish`:
+[electron/package.json](../electron/package.json) configures a single provider in `build.publish`:
 
 ```json
 "publish": [
-  {
-    "provider": "generic",
-    "url": "https://updates.miqaaat.com/",
-    "channel": "latest"
-  },
   {
     "provider": "github",
     "owner": "bdevgroup",
@@ -32,61 +27,50 @@ Checks re-run every hour while the app is open. Errors are logged to `electron-l
 ]
 ```
 
-When you `npm run release`, electron-builder uploads artifacts to **both** destinations. The installed app's auto-updater client checks **the first one** (`generic`) for `latest.yml` — so `updates.miqaaat.com` remains primary; GitHub Releases is the redundant copy.
+Each runner in the [release matrix](../.github/workflows/release.yml) uploads its platform's artifacts (Windows ZIP, macOS DMG + zip, Linux AppImage + deb, plus `latest*.yml` and `*.blockmap`) to the same GitHub Release. Installed apps' auto-updater checks the GitHub Releases API hourly for a newer `latest{,-mac,-linux}.yml`.
 
-If you'd rather make GitHub primary (e.g. before `updates.miqaaat.com` is set up), reorder the array.
+> **Update `owner` / `repo`** if you fork: edit `build.publish[0]` accordingly.
 
-### Provider notes
+### Why GitHub Releases (and not generic HTTP)?
 
-| Provider | Pros | Cons |
-| --- | --- | --- |
-| **Generic HTTP** (our primary) | Works with any static host (nginx, Netlify, R2, Spaces). | No signing by default; requires DNS + a host. |
-| **GitHub Releases** (alternate) | Free, versioned, built-in auth for private repos. | Requires `GH_TOKEN` at publish time; rate-limited at very high download volume. |
-| **S3 / CloudFront** | Fast CDN. Set `provider: 's3'`. | Needs IAM. |
+We previously had a `generic` provider pointing at `updates.miqaaat.com` as a redundant copy. It was dropped in v1.0.2 — the URL had no upload endpoint, electron-builder warned on every release, and a second copy added no real benefit. If you ever set up a self-hosted update server, add it back as an additional `publish` entry; electron-builder publishes to all configured providers in parallel.
 
-For production, prefer **GitHub Releases** or a signed S3 setup so auto-updates can't be hijacked by an attacker serving a poisoned `latest.yml`.
+### Other providers (for reference)
 
-> **Update the `owner` and `repo`** before your first GitHub release if needed: the publisher is set to `bdevgroup/miqaat`. If your GitHub org or repo name differs, edit `build.publish[1]` accordingly.
+| Provider | When to consider |
+| --- | --- |
+| **GitHub Releases** (current) | Free, versioned, integrates with the workflow's `GITHUB_TOKEN`. Rate-limited only at very high download volumes. |
+| **S3 / CloudFront** (`provider: 's3'`) | If you outgrow GitHub's bandwidth ceiling. Needs IAM creds in CI. |
+| **Generic HTTP** | Self-hosted nginx/Netlify/R2. Useful for fully self-contained distribution. |
 
 ## Publishing a new version
 
-1. Bump version in `/package.json`, `/server/package.json`, `/client/package.json`, and `/electron/package.json` (all four — see `CHANGELOG.md` template).
-2. Add a CHANGELOG entry.
-3. (One-time) Set `GH_TOKEN` in your environment with `repo` scope on the target GitHub repo.
-4. `npm run release` — does the full chain: builds all three workspaces, populates `electron/node_modules`, then runs `electron-builder --publish=always`. Artifacts (`Miqaat-<version>-win.zip` + `latest.yml`) upload to both providers.
-5. Running apps pick up the update within an hour or on next launch.
+See [docs/releasing.md](releasing.md) for the full release process — `npm run release:bump`, the matrix workflow, the revalidate webhook, etc. The TL;DR:
 
-```bash
-# Full release (production)
-GH_TOKEN=ghp_xxx npm run release
-
-# Draft release on GitHub side (no public release until you click Publish in the GH UI)
-GH_TOKEN=ghp_xxx npm run release:draft
-
-# Local-only build (no publish)
-npm run package
+```powershell
+npm run release:bump patch -- --push
 ```
 
-`release:draft` uses `--publish=onTagOrDraft`, which uploads to GitHub Releases as a draft and **does not** push to the generic provider. Useful for staging before the public release URL flips.
+The tag push triggers `.github/workflows/release.yml`, which builds + signs (when configured) + uploads on Windows, macOS, and Linux runners in parallel.
 
 ## Code signing — the unshipped prerequisite
 
-Windows auto-updates **should** be code-signed, otherwise:
-- Users see a SmartScreen "Unknown publisher" warning on every update.
-- Some corporate endpoint-protection tools reject the unsigned installer silently.
+Updates **should** be signed; otherwise:
+- **Windows:** SmartScreen "Unknown publisher" warning on every install/update. Some corporate endpoint-protection tools reject unsigned installers silently.
+- **macOS:** Gatekeeper blocks first launch — users have to right-click → Open the first time. Notarization is required for Apple Silicon Macs to install at all without admin approval.
 
-We haven't set this up yet. The moment you have a cert, add to `electron/package.json`:
+When you have a Windows cert, add to `electron/package.json`:
 
 ```json
 "win": {
-  "target": ["zip", "dir"],
+  "target": ["zip"],
   "icon": "resources/icon.ico",
   "certificateFile": "path/to/cert.pfx",
   "certificatePassword": "@env CSC_KEY_PASSWORD"
 }
 ```
 
-macOS needs Developer ID Application + Notarization. Both are paid and involve Apple/Microsoft account setup — separate workstream.
+For macOS Developer ID + Notarization, drop the `"identity": null` flag and set `CSC_LINK` + `CSC_KEY_PASSWORD` + `APPLE_ID` + `APPLE_APP_SPECIFIC_PASSWORD` + `APPLE_TEAM_ID` as repo secrets — electron-builder picks them up from env automatically. See [docs/releasing.md § Code signing](releasing.md#code-signing--the-unshipped-prerequisite).
 
 ## Dev mode
 
