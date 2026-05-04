@@ -1,0 +1,87 @@
+# Release workflow for Miqāt — builds the Windows ZIP and publishes
+# it to GitHub Releases. Triggered by pushing a `v*.*.*` tag, or by
+# clicking "Run workflow" in the Actions UI.
+#
+# Version source of truth is `electron/package.json`. Bump it, commit,
+# tag with the matching `vX.Y.Z`, push the tag — the workflow takes
+# over from there. electron-builder uses the tag's `GH_TOKEN` to create
+# the release and upload assets + the `latest.yml` file electron-updater
+# needs for in-app auto-updates.
+
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to build (e.g. v1.0.1) — must already exist'
+        required: true
+        type: string
+
+# Releases are sequential — never run two at once on the same tag.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  # electron-builder needs to create the GitHub Release and upload
+  # assets. The default GITHUB_TOKEN with `contents: write` is enough.
+  contents: write
+
+jobs:
+  windows:
+    name: Build · Sign · Publish (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # If triggered manually with a tag input, check that ref out;
+          # otherwise the tag push already provides the right ref.
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build all workspaces
+        # server (nest) → client (vite) → electron (tsc). The release
+        # script re-runs `npm run build` itself, but doing it here makes
+        # the failure mode clearer if a workspace breaks.
+        run: npm run build
+
+      - name: Package + publish
+        # `npm run release` does:
+        #   1. npm run build (no-op, already ran)
+        #   2. electron install:prod-deps (production-only deps in electron/)
+        #   3. electron-builder install-app-deps (rebuilds better-sqlite3
+        #      against Electron's Node ABI)
+        #   4. electron-builder --publish=always (uploads to GH Releases
+        #      via the `github` provider in electron/package.json)
+        env:
+          # electron-builder reads GH_TOKEN, not GITHUB_TOKEN.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run release
+
+      - name: Upload build artifact (debugging)
+        # Keeps the unpacked dist around for 7 days in case a release
+        # asset is malformed and we need to inspect it without rerunning.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: miqaat-windows-${{ github.ref_name }}
+          path: |
+            electron/dist-build/*.zip
+            electron/dist-build/latest.yml
+            electron/dist-build/*.blockmap
+          retention-days: 7
+          if-no-files-found: warn
