@@ -27,7 +27,8 @@
     "test:e2e": "playwright test",
     "test:e2e:setup": "npm run build && npm --workspace electron run install:prod-deps && npm --workspace electron run package -- --dir",
     "fetch:audio": "node scripts/fetch-athans.mjs",
-    "generate:icons": "node scripts/generate-icons.mjs"
+    "generate:icons": "node scripts/generate-icons.mjs",
+    "release:bump": "node scripts/bump-version.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
