@@ -1,6 +1,6 @@
 {
   "name": "@miqaat/electron",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Miqāt desktop shell",
   "main": "dist/main.js",
@@ -54,18 +54,30 @@
       "!node_modules/**/.bin/**"
     ],
     "extraResources": [
-      { "from": "../server/dist", "to": "server" },
-      { "from": "../client/dist", "to": "client" }
+      {
+        "from": "../server/dist",
+        "to": "server"
+      },
+      {
+        "from": "../client/dist",
+        "to": "client"
+      }
     ],
     "asarUnpack": [
       "node_modules/better-sqlite3/**/*"
     ],
     "win": {
-      "target": ["zip", "dir"],
+      "target": [
+        "zip",
+        "dir"
+      ],
       "icon": "resources/icon.ico"
     },
     "mac": {
-      "target": ["zip", "dir"],
+      "target": [
+        "zip",
+        "dir"
+      ],
       "icon": "resources/icon.png"
     },
     "publish": [
