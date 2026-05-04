@@ -1,6 +1,6 @@
 {
   "name": "@miqaat/electron",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "description": "Miqāt desktop shell",
   "main": "dist/main.js",
@@ -74,8 +74,14 @@
     },
     "mac": {
       "target": [
-        { "target": "dmg", "arch": "universal" },
-        { "target": "zip", "arch": "universal" }
+        {
+          "target": "dmg",
+          "arch": "universal"
+        },
+        {
+          "target": "zip",
+          "arch": "universal"
+        }
       ],
       "icon": "resources/icon.png",
       "identity": null,
