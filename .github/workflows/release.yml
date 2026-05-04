@@ -107,8 +107,8 @@ jobs:
           if-no-files-found: warn
 
   revalidate-landing:
-    # Tells the landing site (miqaaat.com / miqaat.develop-better-solutions.com)
-    # to drop its ISR cache and refetch the GitHub Releases API right
+    # Tells the landing site (miqaaat.com) to drop its ISR cache and
+    # refetch the GitHub Releases API right
     # now — without this, visitors wait up to 10 minutes after a release
     # for the new download URLs to appear. Skipped if the secrets aren't
     # set, so a fresh fork doesn't fail this step.

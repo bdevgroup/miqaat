@@ -12,7 +12,7 @@ npm run release:bump patch -- --push   # 1.0.3 → 1.0.4
 That's it. Watch:
 - **Build:** [github.com/bdevgroup/miqaat/actions/workflows/release.yml](https://github.com/bdevgroup/miqaat/actions/workflows/release.yml)
 - **Release page:** [github.com/bdevgroup/miqaat/releases/latest](https://github.com/bdevgroup/miqaat/releases/latest) (appears once the matrix completes, ~15–25 min)
-- **Landing CTAs:** [miqaat.develop-better-solutions.com](https://miqaat.develop-better-solutions.com/#download) refreshes within seconds (via the revalidate webhook) or up to 10 min (via ISR fallback).
+- **Landing CTAs:** [miqaaat.com](https://miqaaat.com/#download) refreshes within seconds (via the revalidate webhook) or up to 10 min (via ISR fallback).
 
 ## What `release:bump` does
 
@@ -168,7 +168,7 @@ If only the AppImage shows up on a release: the runner is missing `fakeroot`. Th
 
 ### "The landing still shows the old version"
 
-1. Open `https://miqaat.develop-better-solutions.com/` in incognito to bypass browser cache.
+1. Open `https://miqaaat.com/` in incognito to bypass browser cache.
 2. If still stale: the revalidate webhook didn't fire. Either the secrets aren't set, or the workflow's matrix didn't reach full success. Check the `Refresh landing cache` job's logs.
 3. ISR fallback kicks in within 10 minutes regardless. After that, the next page request triggers a background refetch and the visitor *after* that one sees the fresh version.
 
