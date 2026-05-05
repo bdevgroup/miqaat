@@ -750,6 +750,7 @@ export const DICT: Dict = {
   'update.downloading': { en: 'Downloading update', fr: 'Téléchargement en cours', ar: 'جارٍ تنزيل التحديث' },
   'update.ready':       { en: 'Update ready — restart to install', fr: 'Mise à jour prête — redémarrez pour installer', ar: 'التحديث جاهز — أعد التشغيل للتثبيت' },
   'update.install':     { en: 'Restart & install', fr: 'Redémarrer et installer', ar: 'إعادة التشغيل والتثبيت' },
+  'update.download':    { en: 'Download from GitHub', fr: 'Télécharger depuis GitHub', ar: 'تنزيل من GitHub' },
 };
 
 export function translate(key: string, lang: Lang): string {
