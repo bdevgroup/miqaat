@@ -54,7 +54,7 @@ export function AthanPlayer({ settings }: { settings: AppSettings }) {
   };
 
   return (
-    <Card className="flex flex-col gap-4 p-5">
+    <Card className="flex min-w-0 flex-col gap-4 overflow-hidden p-5">
       <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
         {t('athan.title')}
       </div>
@@ -86,7 +86,7 @@ export function AthanPlayer({ settings }: { settings: AppSettings }) {
             <Label
               key={id}
               htmlFor={`reciter-${id}`}
-              className="flex cursor-pointer items-center gap-3 rounded-md border border-primary/30 bg-primary/5 p-3 hover:bg-primary/10"
+              className="flex min-w-0 cursor-pointer items-center gap-3 overflow-hidden rounded-md border border-primary/30 bg-primary/5 p-3 hover:bg-primary/10"
             >
               <RadioGroupItem value={id} id={`reciter-${id}`} />
               {/* min-w-0 lets the flex child actually shrink so `truncate`

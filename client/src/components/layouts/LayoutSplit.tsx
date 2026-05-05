@@ -28,7 +28,7 @@ export function LayoutSplit({
     <main className="flex flex-1 overflow-hidden">
       {/* Left rail — clock/date + Athan player (the "what's about to play"
           channel sits next to the time so the eye stays in one column). */}
-      <aside className="hidden w-90 shrink-0 overflow-y-auto border-r bg-card/30 p-4 md:block">
+      <aside className="hidden w-90 min-w-0 shrink-0 overflow-x-hidden overflow-y-auto border-r bg-card/30 p-4 md:block">
         <div className="flex flex-col gap-3">
           <HijriCard tz={tz} />
           <div data-tour="athan-player">
@@ -121,7 +121,7 @@ export function LayoutSplit({
       {/* Right rail — Live radio (passive listening). Was on the left
           before, but the Athan player belongs next to the next-prayer
           countdown; radio is the secondary feature and lives here. */}
-      <aside className="hidden w-80 shrink-0 overflow-y-auto border-l bg-card/30 p-4 lg:block">
+      <aside className="hidden w-80 min-w-0 shrink-0 overflow-x-hidden overflow-y-auto border-l bg-card/30 p-4 lg:block">
         <div className="flex flex-col gap-3">
           <RadioPlayer settings={settings} />
         </div>

@@ -33,7 +33,7 @@ export function LayoutSplitArc({
     <main className="flex flex-1 overflow-hidden">
       {/* Same rail composition as LayoutSplit — clock + Athan on the left,
           Radio on the right. Variant C only differs in the centre. */}
-      <aside className="hidden w-90 shrink-0 overflow-y-auto border-r bg-card/30 p-4 md:block">
+      <aside className="hidden w-90 min-w-0 shrink-0 overflow-x-hidden overflow-y-auto border-r bg-card/30 p-4 md:block">
         <div className="flex flex-col gap-3">
           <HijriCard tz={tz} />
           <AthanPlayer settings={settings} />
@@ -93,7 +93,7 @@ export function LayoutSplitArc({
         </div>
       </section>
 
-      <aside className="hidden w-80 shrink-0 overflow-y-auto border-l bg-card/30 p-4 lg:block">
+      <aside className="hidden w-80 min-w-0 shrink-0 overflow-x-hidden overflow-y-auto border-l bg-card/30 p-4 lg:block">
         <div className="flex flex-col gap-3">
           <RadioPlayer settings={settings} />
         </div>
