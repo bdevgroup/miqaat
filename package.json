@@ -1,6 +1,6 @@
 {
   "name": "miqaat",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "private": true,
   "description": "Miqāt — a serene, local-first desktop app for prayer times, Qibla, Hijri calendar, and Athan playback.",
   "workspaces": [
