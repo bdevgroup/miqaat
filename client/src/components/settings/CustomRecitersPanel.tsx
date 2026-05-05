@@ -160,7 +160,9 @@ export function CustomRecitersPanel() {
                 <div className="flex min-w-0 flex-1 items-center gap-2">
                   <FileAudio className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                   <div className="flex min-w-0 flex-col">
-                    <span className="truncate text-sm font-medium">{r.name}</span>
+                    <span className="truncate text-sm font-medium" title={r.name}>
+                      {r.name}
+                    </span>
                     <span className="font-mono text-[10px] text-muted-foreground">
                       {formatBytes(r.size_bytes)}
                       {r.duration_ms ? ` · ${formatDuration(r.duration_ms)}` : ''}

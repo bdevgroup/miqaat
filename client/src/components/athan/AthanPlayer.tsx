@@ -89,8 +89,18 @@ export function AthanPlayer({ settings }: { settings: AppSettings }) {
               className="flex cursor-pointer items-center gap-3 rounded-md border border-primary/30 bg-primary/5 p-3 hover:bg-primary/10"
             >
               <RadioGroupItem value={id} id={`reciter-${id}`} />
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">★ {r.name}</span>
+              {/* min-w-0 lets the flex child actually shrink so `truncate`
+                  can engage. Without it, the inner span would force the
+                  parent wide enough to fit the entire filename and overflow
+                  the card. The native `title` attribute carries the full
+                  name for users who hover the truncated text. */}
+              <div className="flex min-w-0 flex-1 flex-col">
+                <span
+                  className="truncate text-sm font-medium"
+                  title={r.name}
+                >
+                  ★ {r.name}
+                </span>
                 <span className="text-xs text-muted-foreground">
                   {t('custom.row.label')}
                 </span>
