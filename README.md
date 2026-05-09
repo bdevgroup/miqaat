@@ -5,9 +5,13 @@
 
 A serene, local-first desktop app for prayer times, Qibla, Hijri calendar, and Athan playback. Works offline. Ships at [miqaaat.com](https://miqaaat.com).
 
-![version](https://img.shields.io/badge/version-1.0.0-d4a86a)
-![platform](https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux-lightgrey)
-![license](https://img.shields.io/badge/license-MIT-d4a86a)
+[![release](https://img.shields.io/github/v/release/bdevgroup/miqaat?color=d4a86a&label=release)](https://github.com/bdevgroup/miqaat/releases/latest)
+[![downloads](https://img.shields.io/github/downloads/bdevgroup/miqaat/total?color=d4a86a&label=downloads)](https://github.com/bdevgroup/miqaat/releases)
+![platform](https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux-1f1b16)
+[![license](https://img.shields.io/github/license/bdevgroup/miqaat?color=d4a86a)](LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/bdevgroup/miqaat/ci.yml?branch=main&label=ci)](https://github.com/bdevgroup/miqaat/actions/workflows/ci.yml)
+
+![Miqāt — desktop prayer-time app, Miqāt theme, with Qibla compass and live radio sidebars](docs/img/hero.png)
 
 ## Features
 
@@ -92,6 +96,8 @@ npm run package       # ZIP build via electron-builder
 ```
 
 See [docs/getting-started.md](docs/getting-started.md) for setup, [docs/desktop-builds.md](docs/desktop-builds.md) for packaging, [docs/releasing.md](docs/releasing.md) for the release flow (one-shot bump → tag → matrix build → landing refresh), and [docs/auto-updater.md](docs/auto-updater.md) for in-app update behaviour.
+
+What's coming next is in [ROADMAP.md](ROADMAP.md) — Quran integration, more languages, cloud sync, mobile companion.
 
 ## Stack
 

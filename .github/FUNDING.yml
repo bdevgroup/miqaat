@@ -1,0 +1,5 @@
+# Surfaces the "Sponsor" button at the top of the repo + on the
+# release page. Add github_sponsors when/if you sign up for that
+# program; PayPal is what the in-app Support dialog already points at.
+
+custom: ['https://paypal.me/bitardev']
